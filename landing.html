@@ -1042,9 +1042,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
           <div class="lg:col-span-7 text-right">
             <div class="eyebrow glass mb-4"><span class="eyebrow-dot"></span>جاهزون لتطوير جودة القراءة؟</div>
-            <h2 class="font-cairo font-black text-3xl md:text-[40px] leading-[1.6] tracking-tight text-white mb-4">
-              ارتقِ بمديريتك ومؤسستك إلى <span class="gradient-text">الجيل الجديد من التقويم.</span>
-            </h2>
+            <h2 class="font-cairo font-black text-3xl md:text-[40px] leading-[1.6] tracking-tight text-white mb-4">ارتقِ بتجربتك التعليمية إلى <span class="gradient-text">الجيل الجديد من التقويم.</span></h2>
             <p class="mt-4 text-white/60 text-base md:text-lg leading-relaxed max-w-xl">
               استبدل التفريغ الورقي والتصحيح المجهد بالنظام الذكي الأول المصمم خصيصاً لمواكبة مقاربة TaRL وتوفير الوقت لصالح الجودة التعليمية.
             </p>
@@ -1067,7 +1065,7 @@
           <div class="lg:col-span-5">
             <div class="glass rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl" style="background:rgba(255,255,255,0.04);">
               <h3 class="font-cairo font-extrabold text-xl text-white mb-2">طلب عرض تجريبي خاص</h3>
-              <p class="text-xs text-white/50 mb-6 font-medium">احصل على صلاحيات الدعم والولوج المباشر لأستاذك أو مؤسستك.</p>
+              <p class="text-xs text-white/50 mb-6 font-medium">احصل على حسابك التجريبي المباشر وابدأ التقويم داخل فصلك الآن.</p>
               <form onsubmit="event.preventDefault();" class="space-y-4">
                 <div>
                   <label class="block font-cairo text-xs text-white/70 font-semibold mb-1.5">الاسم الكامل / المؤسسة</label>
@@ -1081,6 +1079,7 @@
                   <span>احجز العرض المجاني الآن</span>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
                 </button>
+                <p class="text-[11px] text-white/40 text-center mt-3 font-tajawal flex items-center justify-center gap-1.5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> <span>بياناتك آمنة تماماً • بدون رسائل مزعجة</span></p>
               </form>
             </div>
           </div>
@@ -1131,7 +1130,7 @@
   /* ---------- ambient orb drift (pure float, no scroll scrub) ---------- */
   if (!reduceMotion) {
     gsap.utils.toArray('.orb').forEach((orb, i) => {
-      gsap.to(orb, { x: 'random(-70,70)', y: 'random(-50,50)', duration: 'random(9,15)', repeat: -1, yoyo: true, ease: 'sine.inOut', delay: i * 0.6 });
+    gsap.to(orb, { x: 'random(-40,40)', y: 'random(-30,30)', duration: 'random(9,15)', repeat: -1, yoyo: true, ease: 'sine.inOut', delay: i * 0.6 });
     });
   }
 
@@ -1254,7 +1253,7 @@
     if (reduceMotion) { gsap.set(el, { opacity: 1, y: 0, rotationX: 0 }); return; }
     gsap.fromTo(el,
       { opacity: 0, y: 45, rotationX: -12, transformPerspective: 900 },
-      { opacity: 1, y: 0, rotationX: 0, duration: 1.1, ease: 'power4.out', clearProps: 'all', scrollTrigger: { trigger: el, start: 'top 85%' } }
+      { opacity: 1, y: 0, rotationX: 0, duration: 1.1, ease: 'power4.out', clearProps: 'all', scrollTrigger: { trigger: el, start: 'top 92%' } }
     );
   });
 
