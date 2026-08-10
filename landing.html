@@ -220,8 +220,8 @@
         <a href="#analytics" class="nav-link hover:text-white transition-colors">التحليلات</a>
         <a href="#cta" class="nav-link hover:text-white transition-colors">انضم إلينا</a>
       </div>
-      <a href="#cta" class="magnetic btn btn-ghost font-cairo font-bold text-sm px-5 py-2.5 rounded-full">
-        <span class="magnetic-inner">جرّب مجانًا</span>
+      <a href="#cta" class="btn btn-ghost transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-white/10 hover:border-white/20 active:scale-[0.98] font-cairo font-bold text-sm px-5 py-2.5 rounded-full">
+        <span>جرّب مجانًا</span>
       </a>
     </div>
     <div id="nav-scroll-progress" class="absolute bottom-0 right-0 h-[2px] w-0 pointer-events-none" style="background:linear-gradient(to left,#38BDF8,#6366F1,#A855F7);opacity:0.85;transition:none;"></div>
@@ -245,14 +245,14 @@
         </p>
 
         <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
-          <a href="#cta" class="hero-cta magnetic btn btn-primary font-cairo font-bold text-[15px] px-7 py-4 rounded-full inline-flex items-center gap-2.5">
-            <span class="magnetic-inner inline-flex items-center gap-2.5">
+          <a href="#cta" class="hero-cta btn btn-primary transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_35px_rgba(99,102,241,0.45)] active:scale-[0.98] font-cairo font-bold text-[15px] px-7 py-4 rounded-full inline-flex items-center gap-2.5">
+            <span class="inline-flex items-center gap-2.5">
               ابدأ التقويم الآن
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
             </span>
           </a>
-          <a href="#analytics" class="hero-cta magnetic btn btn-ghost font-cairo font-bold text-[15px] px-7 py-4 rounded-full inline-flex items-center gap-2.5">
-            <span class="magnetic-inner inline-flex items-center gap-2.5">
+          <a href="#analytics" class="hero-cta btn btn-ghost transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-white/10 hover:border-white/20 active:scale-[0.98] font-cairo font-bold text-[15px] px-7 py-4 rounded-full inline-flex items-center gap-2.5">
+            <span class="inline-flex items-center gap-2.5">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               شاهد العرض التوضيحي
             </span>
@@ -636,7 +636,7 @@
       <div class="reveal">
         <div class="flex items-center justify-center mb-8 border-b border-white/10 pb-4">
           <div class="relative flex items-center gap-1.5 p-1.5 rounded-full glass max-w-full overflow-x-auto whitespace-nowrap no-scrollbar" id="stage-tabs-container" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);">
-            <div id="tab-active-pill" class="absolute top-1.5 bottom-1.5 rounded-full pointer-events-none transition-all duration-400" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px);"></div>
+            <div id="tab-active-pill" class="absolute top-1.5 bottom-1.5 rounded-full pointer-events-none" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px);"></div>
             <div id="tab-progress-bar" class="absolute bottom-0 right-0 h-[3px] w-0 z-0 transition-none" style="background:linear-gradient(to left,#38BDF8,#6366F1);"></div>
             <button onclick="changeStageManual(0, this)" class="stage-tab-btn relative z-10 px-5 py-2.5 rounded-full font-cairo font-bold text-xs sm:text-sm text-white transition-colors duration-300 flex items-center gap-2">
               <span class="w-2 h-2 rounded-full" style="background:#38bdf8;box-shadow:0 0 8px #38BDF8;"></span>
@@ -927,10 +927,17 @@
       const activePill = document.getElementById('tab-active-pill');
       const container = document.getElementById('stage-tabs-container');
       if (!btnEl || !activePill || !container) return;
-      const parentRect = container.getBoundingClientRect();
-      const tabRect = btnEl.getBoundingClientRect();
-      const rightOffset = parentRect.right - tabRect.right;
-      gsap.to(activePill, { right: rightOffset, width: tabRect.width, duration: 0.4, ease: 'power3.out' });
+
+      // RTL Layout Math: Immune to 3D rotations and scroll triggers
+      const rightOffset = container.clientWidth - (btnEl.offsetLeft + btnEl.offsetWidth);
+      const isInitial = !activePill.style.right;
+      
+      gsap.to(activePill, {
+        right: rightOffset,
+        width: btnEl.offsetWidth,
+        duration: isInitial ? 0 : 0.35,
+        ease: 'power3.out'
+      });
     }
 
     function changeStage(newIndex, clickedTabElement) {
@@ -1012,7 +1019,17 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       const firstTab = document.querySelector('.stage-tab-btn');
-      if (firstTab) updatePillPosition(firstTab);
+      if (firstTab) {
+        // Initial instant positioning
+        updatePillPosition(firstTab);
+        // Recalculate accurately once custom Arabic web fonts (Cairo) finish rendering
+        if (document.fonts) {
+          document.fonts.ready.then(() => updatePillPosition(firstTab));
+        }
+      }
+      window.addEventListener('load', () => {
+        if (firstTab) updatePillPosition(firstTab);
+      });
       document.querySelectorAll('#analytics .bento-card').forEach((card) => {
         card.addEventListener('mousemove', (e) => {
           const rect = card.getBoundingClientRect();
@@ -1107,9 +1124,9 @@
   /* ---------- nav scroll state ---------- */
   const nav = document.getElementById('site-nav');
   ScrollTrigger.create({
-    start: 'top -80', end: 99999,
+    start: 'top -10', end: 99999,
     onUpdate: (self) => {
-      if (self.scroll() > 80) nav.classList.add('scrolled');
+      if (self.scroll() > 10) nav.classList.add('scrolled');
       else nav.classList.remove('scrolled');
     }
   });
@@ -1184,8 +1201,8 @@
       onComplete: () => { gsap.set(allWords, { clearProps: 'all' }); allWords.forEach(w => w.classList.remove('inline-block')); ScrollTrigger.refresh(); }
     })
     .from('.hero-eyebrow', { opacity: 0, y: 10, duration: 0.8 }, '-=0.4')
-    .from('.hero-cta', { opacity: 0, y: 15, duration: 0.8, stagger: 0.1 }, '-=0.6')
-    .from('.hero-mockup', { opacity: 0, y: 70, rotationY: -16, rotationX: 6, transformPerspective: 1300, duration: 1.5, ease: 'elastic.out(1,0.75)' }, '-=0.8');
+    .fromTo('.hero-cta', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', clearProps: 'transform' }, '-=1.2')
+    .from('.hero-mockup', { opacity: 0, y: 45, duration: 0.9, ease: 'power3.out' }, '-=0.8');
   })();
 
   /* ---------- pulsing status badges ---------- */
@@ -1196,38 +1213,23 @@
 
   /* ---------- 3D tilt hero mockup ---------- */
   (function() {
-    const section = document.getElementById('hero-section');
     const mockup = document.querySelector('.hero-mockup');
-    if (!section || !mockup || reduceMotion) return;
-    section.addEventListener('mousemove', (e) => {
-      const rect = section.getBoundingClientRect();
+    if (!mockup || reduceMotion) return;
+
+    mockup.addEventListener('mousemove', (e) => {
+      const rect = mockup.getBoundingClientRect();
       const px = (e.clientX - rect.left) / rect.width - 0.5;
       const py = (e.clientY - rect.top) / rect.height - 0.5;
-      gsap.to(mockup, { rotationY: px * 14, rotationX: -py * 10, transformPerspective: 1500, duration: 0.7, ease: 'power3.out' });
+      gsap.to(mockup, { rotationY: px * 12, rotationX: -py * 8, transformPerspective: 1500, duration: 0.4, ease: 'power2.out' });
     });
-    section.addEventListener('mouseleave', () => {
-      gsap.to(mockup, { rotationY: 0, rotationX: 0, duration: 1, ease: 'elastic.out(1,0.5)' });
+
+    mockup.addEventListener('mouseleave', () => {
+      gsap.to(mockup, { rotationY: 0, rotationX: 0, duration: 0.8, ease: 'power2.out' });
     });
   })();
 
-  /* ---------- magnetic + press physics ---------- */
-  document.querySelectorAll('.magnetic').forEach((btn) => {
-    const inner = btn.querySelector('.magnetic-inner');
-    if (!reduceMotion) {
-      btn.addEventListener('mousemove', (e) => {
-        const rect = btn.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        gsap.to(btn, { x: x * 0.35, y: y * 0.35, duration: 0.6, ease: 'power3.out' });
-        if (inner) gsap.to(inner, { x: x * 0.15, y: y * 0.15, duration: 0.6, ease: 'power3.out' });
-      });
-      btn.addEventListener('mouseleave', () => {
-        gsap.to(btn, { x: 0, y: 0, scale: 1, duration: 1, ease: 'elastic.out(1,0.4)' });
-        if (inner) gsap.to(inner, { x: 0, y: 0, duration: 1, ease: 'elastic.out(1,0.4)' });
-      });
-    }
-    btn.addEventListener('mousedown', () => gsap.to(btn, { scale: 0.95, duration: 0.15, ease: 'power2.out' }));
-    btn.addEventListener('mouseup', () => gsap.to(btn, { scale: 1, duration: 0.4, ease: 'elastic.out(1,0.5)' }));
+  /* ---------- button ripple physics ---------- */
+  document.querySelectorAll('.btn').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       const rect = btn.getBoundingClientRect();
       const ripple = document.createElement('span');
