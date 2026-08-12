@@ -1289,16 +1289,23 @@
     const submitBtn = document.getElementById('auth-submit-btn');
     const toggleText = document.getElementById('auth-toggle-text');
 
+    const pwInput = document.getElementById('auth-password-input');
+    const forgotBtn = document.getElementById('forgot-password-btn');
+
     if (mode === 'register') {
       if (title) title.textContent = 'إنشاء حساب جديد';
       if (subtitle) subtitle.textContent = 'انضم إلى أستاذة المدارس الرائدة وابدأ التقويم مجاناً';
       if (submitBtn) submitBtn.innerHTML = '<span>إنشاء حساب مجاني</span>';
       if (toggleText) toggleText.innerHTML = 'لديك حساب بالفعل؟ <button onclick="switchAuthTab(\'login\')" class="text-sky-400 font-bold hover:underline transition-all mr-1">تسجيل الدخول</button>';
+      if (pwInput) pwInput.setAttribute('autocomplete', 'new-password');
+      if (forgotBtn) forgotBtn.classList.add('hidden');
     } else {
       if (title) title.textContent = 'مرحباً بك في رائدة';
       if (subtitle) subtitle.textContent = 'سجل دخولك لمتابعة تقويمات تلاميذك وإدارة فصلك';
       if (submitBtn) submitBtn.innerHTML = '<span>تسجيل الدخول</span>';
       if (toggleText) toggleText.innerHTML = 'ليس لديك حساب؟ <button onclick="switchAuthTab(\'register\')" class="text-sky-400 font-bold hover:underline transition-all mr-1">إنشاء حساب جديد</button>';
+      if (pwInput) pwInput.setAttribute('autocomplete', 'current-password');
+      if (forgotBtn) forgotBtn.classList.remove('hidden');
     }
   }
 
@@ -1343,11 +1350,12 @@
     <form id="auth-form" onsubmit="handleEmailAuth(event)" class="space-y-3.5">
       <div id="modal-banner" class="hidden rounded-xl p-3 text-xs font-cairo text-center transition-all duration-300 mb-3"></div>
       <div>
-        <input type="email" required placeholder="البريد الإلكتروني" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
+        <input type="email" name="email" autocomplete="email" required placeholder="البريد الإلكتروني" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
         <p id="email-field-error" class="hidden text-[11px] text-rose-400 font-cairo mt-1.5 text-right flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> <span id="email-error-text"></span></p>
       </div>
       <div>
-        <input type="password" required placeholder="كلمة المرور" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
+        <input type="password" id="auth-password-input" name="password" autocomplete="current-password" required placeholder="كلمة المرور" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
+        <button type="button" id="forgot-password-btn" onclick="handleForgotPassword()" class="text-[11px] text-sky-400 font-cairo hover:underline mt-1.5 block mr-auto">هل نسيت كلمة المرور؟</button>
       </div>
       <button type="submit" id="auth-submit-btn" class="btn btn-primary font-cairo font-bold text-sm w-full py-3.5 rounded-xl mt-1 flex items-center justify-center gap-2" style="box-shadow:0 10px 30px rgba(99,102,241,0.4);">
         <span>تسجيل الدخول</span>
@@ -1373,6 +1381,7 @@
     signInWithPopup, 
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword,
+    sendPasswordResetEmail,
     sendEmailVerification,
     signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1405,6 +1414,34 @@
         return 'حدث خطأ غير متوقع. يرجى إعادة المحاولة لاحقاً.';
     }
   }
+
+  // Password Strength Validator: Min 8 chars, at least one letter and one number
+  function isStrongPassword(password) {
+    const strongRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+    return strongRegex.test(password);
+  }
+
+  // Forgot Password Handler
+  window.handleForgotPassword = async function() {
+    const emailInput = document.querySelector('#auth-form input[type="email"]');
+    if (!emailInput || !emailInput.value.trim()) {
+      showInlineEmailError("يرجى كتابة بريدك الإلكتروني أولاً لإرسال رابط إعادة الضبط.");
+      return;
+    }
+
+    const email = emailInput.value.trim();
+    try {
+      const actionCodeSettings = {
+        url: window.location.origin + window.location.pathname + '?reset=true',
+        handleCodeInApp: true
+      };
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      showModalBanner("📧 أرسلنا رابط إعادة ضبط كلمة المرور إلى بريدك الإلكتروني (" + email + ").", "success");
+    } catch (error) {
+      console.error("Reset Password Error:", error);
+      showModalBanner("عذراً، تعذر إرسال رابط الضبط. التأكد من صحة البريد.", "error");
+    }
+  };
 
   // User's Exact Firebase Configuration
   const firebaseConfig = {
@@ -1510,6 +1547,10 @@
 
     try {
       if (window.currentAuthMode === 'register') {
+        if (!isStrongPassword(password)) {
+          showModalBanner("كلمة المرور ضعيفة! يجب أن تحتوي على 8 أحرف على الأقل وتجمع بين الحروف والأرقام.", "error");
+          return;
+        }
         // 1. Create User
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
