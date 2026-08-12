@@ -1370,8 +1370,19 @@
     GoogleAuthProvider, 
     signInWithPopup, 
     createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword 
+    signInWithEmailAndPassword,
+    sendEmailVerification,
+    signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  function isAllowedEmailProvider(email) {
+    const domain = email.split('@')[1]?.toLowerCase();
+    if (!domain) return false;
+
+    // Regex to allow gmail, googlemail, outlook, hotmail, live, msn, yahoo, ymail with any country TLD (.com, .fr, .ma, etc.)
+    const allowedPattern = /^(gmail|googlemail|outlook|hotmail|live|msn|yahoo|ymail)\.[a-z]{2,6}(\.[a-z]{2})?$/i;
+    return allowedPattern.test(domain);
+  }
 
   // User's Exact Firebase Configuration
   const firebaseConfig = {
@@ -1413,18 +1424,45 @@
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
+    // Enforce Allowlist check
+    if (!isAllowedEmailProvider(email)) {
+      alert("عذراً، يُسمح التسجيل فقط باستخدام بريد Gmail أو Outlook/Hotmail أو Yahoo لحماية الحسابات.");
+      return;
+    }
+
     try {
       if (window.currentAuthMode === 'register') {
-        const res = await createUserWithEmailAndPassword(auth, email, password);
-        console.log("Registration Success:", res.user);
+        // 1. Create User
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // 2. Send Verification Link
+        await sendEmailVerification(user);
+
+        alert("تم إنشاء الحساب بنجاح! 📧\nأرسلنا رابط تأكيد إلى بريدك الإلكتروني (" + email + ").\nيرجى فتح صندوق الوارد والضغط على رابط التفعيل للبدء.");
+
+        // Sign out until verified & close modal
+        await signOut(auth);
+        if (window.closeAuthModal) closeAuthModal();
+
       } else {
-        const res = await signInWithEmailAndPassword(auth, email, password);
-        console.log("Login Success:", res.user);
+        // Login logic
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // 3. Check Verification Status on Login
+        if (!user.emailVerified) {
+          alert("حسابك غير مفعل بعد! ⚠️\nيرجى مراجعة بريدك الإلكتروني والضغط على رابط التفعيل الذي أرسلناه لك أولاً.");
+          await signOut(auth);
+          return;
+        }
+
+        // Redirect to dashboard on valid, verified login
+        window.location.href = '/dashboard';
       }
-      window.location.href = '/dashboard'; // Redirect to your active app
     } catch (error) {
-      console.error("Email Auth Error:", error);
-      alert("خطأ في بيانات الحساب: " + error.message);
+      console.error("Auth Error:", error);
+      alert("حدث خطأ أثناء العملية: " + error.message);
     }
   };
 </script>
