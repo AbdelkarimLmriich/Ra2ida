@@ -220,9 +220,12 @@
         <a href="#analytics" class="nav-link hover:text-white transition-colors">التحليلات</a>
         <a href="#cta" class="nav-link hover:text-white transition-colors">انضم إلينا</a>
       </div>
-      <a href="#cta" class="btn btn-ghost transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-white/10 hover:border-white/20 active:scale-[0.98] font-cairo font-bold text-sm px-5 py-2.5 rounded-full">
-        <span>جرّب مجانًا</span>
-      </a>
+      <div class="flex items-center gap-3">
+        <button onclick="openAuthModal('login')" class="nav-link font-cairo font-bold text-sm text-white/80 hover:text-white transition-colors px-3 py-2">تسجيل الدخول</button>
+        <button onclick="openAuthModal('register')" class="btn btn-primary transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_35px_rgba(99,102,241,0.45)] active:scale-[0.98] font-cairo font-bold text-sm px-5 py-2.5 rounded-full text-white">
+          <span>إنشاء حساب مجاني</span>
+        </button>
+      </div>
     </div>
     <div id="nav-scroll-progress" class="absolute bottom-0 right-0 h-[2px] w-0 pointer-events-none" style="background:linear-gradient(to left,#38BDF8,#6366F1,#A855F7);opacity:0.85;transition:none;"></div>
   </nav>
@@ -245,12 +248,7 @@
         </p>
 
         <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
-          <a href="#cta" class="hero-cta btn btn-primary transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_35px_rgba(99,102,241,0.45)] active:scale-[0.98] font-cairo font-bold text-[15px] px-7 py-4 rounded-full inline-flex items-center gap-2.5">
-            <span class="inline-flex items-center gap-2.5">
-              ابدأ التقويم الآن
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-            </span>
-          </a>
+          <button onclick="openAuthModal('register')" class="hero-cta btn btn-primary transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_35px_rgba(99,102,241,0.45)] active:scale-[0.98] font-cairo font-bold text-[15px] px-7 py-4 rounded-full inline-flex items-center gap-2.5"><span class="inline-flex items-center gap-2.5">أنشئ حسابك مجاناً <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span></button>
           <a href="#analytics" class="hero-cta btn btn-ghost transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-white/10 hover:border-white/20 active:scale-[0.98] font-cairo font-bold text-[15px] px-7 py-4 rounded-full inline-flex items-center gap-2.5">
             <span class="inline-flex items-center gap-2.5">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -1081,23 +1079,12 @@
 
           <div class="lg:col-span-5">
             <div class="glass rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl" style="background:rgba(255,255,255,0.04);">
-              <h3 class="font-cairo font-extrabold text-xl text-white mb-2">طلب عرض تجريبي خاص</h3>
-              <p class="text-xs text-white/50 mb-6 font-medium">احصل على حسابك التجريبي المباشر وابدأ التقويم داخل فصلك الآن.</p>
-              <form onsubmit="event.preventDefault();" class="space-y-4">
-                <div>
-                  <label class="block font-cairo text-xs text-white/70 font-semibold mb-1.5">الاسم الكامل / المؤسسة</label>
-                  <input type="text" placeholder="أدخل اسمك أو اسم المؤسسة" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
-                </div>
-                <div>
-                  <label class="block font-cairo text-xs text-white/70 font-semibold mb-1.5">البريد الإلكتروني أو رقم الهاتف</label>
-                  <input type="text" placeholder="example@domain.com" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
-                </div>
-                <button type="submit" class="btn btn-primary font-cairo font-bold text-base w-full py-4 rounded-xl mt-2 flex items-center justify-center gap-2" style="box-shadow:0 10px 30px rgba(99,102,241,0.4);">
-                  <span>احجز العرض المجاني الآن</span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-                </button>
-                <p class="text-[11px] text-white/40 text-center mt-3 font-tajawal flex items-center justify-center gap-1.5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> <span>بياناتك آمنة تماماً • بدون رسائل مزعجة</span></p>
-              </form>
+              <h3 class="font-cairo font-extrabold text-2xl text-white mb-2">ابدأ استخدام رائدة مجاناً</h3>
+              <p class="text-xs text-white/50 mb-6 font-medium">أنشئ حسابك في ثوانٍ وابدأ تقويم تلاميذك الآن دون أي تعقيد.</p>
+              <button onclick="openAuthModal('register')" class="btn btn-primary font-cairo font-bold text-base w-full py-4 rounded-xl mt-2 flex items-center justify-center gap-2 transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-[0.98]" style="box-shadow:0 10px 30px rgba(99,102,241,0.4);">
+                <span>أنشئ حسابك مجاناً الآن</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+              </button>
             </div>
           </div>
         </div>
@@ -1265,6 +1252,181 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 250);
   });
+  /* ---------- auth modal ---------- */
+  let currentAuthMode = 'login';
+
+  function openAuthModal(mode = 'login') {
+    const modal = document.getElementById('auth-modal');
+    const card = document.getElementById('auth-modal-card');
+    if (!modal || !card) return;
+
+    switchAuthTab(mode);
+    modal.classList.remove('hidden', 'pointer-events-none');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      card.classList.remove('scale-95');
+      card.classList.add('scale-100');
+    }, 10);
+  }
+
+  function closeAuthModal() {
+    const modal = document.getElementById('auth-modal');
+    const card = document.getElementById('auth-modal-card');
+    if (!modal || !card) return;
+
+    modal.classList.add('opacity-0');
+    card.classList.remove('scale-100');
+    card.classList.add('scale-95');
+    setTimeout(() => {
+      modal.classList.add('hidden', 'pointer-events-none');
+    }, 300);
+  }
+
+  function switchAuthTab(mode) {
+    window.currentAuthMode = mode;
+    const title = document.getElementById('modal-title');
+    const subtitle = document.getElementById('modal-subtitle');
+    const submitBtn = document.getElementById('auth-submit-btn');
+    const toggleText = document.getElementById('auth-toggle-text');
+
+    if (mode === 'register') {
+      if (title) title.textContent = 'إنشاء حساب جديد';
+      if (subtitle) subtitle.textContent = 'انضم إلى أستاذة المدارس الرائدة وابدأ التقويم مجاناً';
+      if (submitBtn) submitBtn.innerHTML = '<span>إنشاء حساب مجاني</span>';
+      if (toggleText) toggleText.innerHTML = 'لديك حساب بالفعل؟ <button onclick="switchAuthTab(\'login\')" class="text-sky-400 font-bold hover:underline transition-all mr-1">تسجيل الدخول</button>';
+    } else {
+      if (title) title.textContent = 'مرحباً بك في رائدة';
+      if (subtitle) subtitle.textContent = 'سجل دخولك لمتابعة تقويمات تلاميذك وإدارة فصلك';
+      if (submitBtn) submitBtn.innerHTML = '<span>تسجيل الدخول</span>';
+      if (toggleText) toggleText.innerHTML = 'ليس لديك حساب؟ <button onclick="switchAuthTab(\'register\')" class="text-sky-400 font-bold hover:underline transition-all mr-1">إنشاء حساب جديد</button>';
+    }
+  }
+
+  // ESC key listener to close modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAuthModal();
+  });
+
+</script>
+
+<!-- AUTH MODAL -->
+<div id="auth-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 pointer-events-none" onclick="if(event.target === this) closeAuthModal()">
+  <div class="glass rounded-[32px] p-6 sm:p-8 max-w-md w-full border border-white/15 shadow-[0_25px_70px_rgba(0,0,0,0.8)] relative transform scale-95 transition-transform duration-300" id="auth-modal-card">
+    
+    <!-- CLOSE BUTTON -->
+    <button onclick="closeAuthModal()" class="absolute top-5 left-5 w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white/60 hover:text-white transition-colors">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <!-- HEADER -->
+    <div class="text-center mb-6 pt-2">
+      <span class="w-10 h-10 rounded-2xl mx-auto mb-3 flex items-center justify-center" style="background:linear-gradient(135deg, var(--glow-indigo), var(--glow-sky));">
+        <span class="w-3 h-3 rounded-sm bg-white/90 rotate-45"></span>
+      </span>
+      <h3 id="modal-title" class="font-cairo font-black text-2xl text-white tracking-tight">مرحباً بك في رائدة</h3>
+      <p id="modal-subtitle" class="text-xs text-white/60 mt-1 font-medium">ابدأ تقويم فصلك وتتبع أداء تلاميذك في ثوانٍ</p>
+    </div>
+
+    <!-- PRIMARY GOOGLE SIGN-IN BUTTON -->
+    <a href="javascript:void(0)" onclick="handleGoogleSignIn(event)" class="btn w-full py-3.5 px-4 rounded-2xl font-cairo font-bold text-sm text-white flex items-center justify-center gap-3 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-white/10 hover:border-white/30 hover:shadow-[0_10px_25px_rgba(99,102,241,0.25)] active:scale-[0.98]" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 3.99-.98 5.48-2.61l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.15c-.22-.66-.35-1.36-.35-2.15s.13-1.49.35-2.15V7.01H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.99l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.01l3.66 2.84c.87-2.6 3.3-4.47 6.16-4.47z"/></svg>
+      <span>المتابعة باستخدام Google</span>
+    </a>
+
+    <!-- DIVIDER -->
+    <div class="relative my-5 flex items-center justify-center">
+      <div class="w-full border-t border-white/10"></div>
+      <span class="absolute bg-[#0B0F19] px-3 text-[11px] text-white/40 font-tajawal">أو عبر البريد الإلكتروني</span>
+    </div>
+
+    <!-- EMAIL / PASSWORD FORM -->
+    <form id="auth-form" onsubmit="handleEmailAuth(event)" class="space-y-3.5">
+      <div>
+        <input type="email" required placeholder="البريد الإلكتروني" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
+      </div>
+      <div>
+        <input type="password" required placeholder="كلمة المرور" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
+      </div>
+      <button type="submit" id="auth-submit-btn" class="btn btn-primary font-cairo font-bold text-sm w-full py-3.5 rounded-xl mt-1 flex items-center justify-center gap-2" style="box-shadow:0 10px 30px rgba(99,102,241,0.4);">
+        <span>تسجيل الدخول</span>
+      </button>
+    </form>
+
+    <!-- TOGGLE TAB SWITCHER -->
+    <div class="pt-4 text-center border-t border-white/10 mt-5">
+      <p id="auth-toggle-text" class="text-xs text-white/60 font-cairo">
+        ليس لديك حساب؟ 
+        <button onclick="switchAuthTab('register')" class="text-sky-400 font-bold hover:underline transition-all mr-1">إنشاء حساب جديد</button>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+  import { 
+    getAuth, 
+    GoogleAuthProvider, 
+    signInWithPopup, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword 
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  // User's Exact Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDUR5OhENJjpQA24MaoQWw1WnOUTljRbis",
+    authDomain: "ra2ida---naajed.firebaseapp.com",
+    projectId: "ra2ida---naajed",
+    storageBucket: "ra2ida---naajed.firebasestorage.app",
+    messagingSenderId: "913670751939",
+    appId: "1:913670751939:web:3c57e3da2fba35b36f0476",
+    measurementId: "G-SFE7ETD9C5"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
+
+  // 1. Google Sign-In Handler
+  window.handleGoogleSignIn = async function(e) {
+    if (e) e.preventDefault();
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("Google Login Success:", result.user);
+      window.location.href = '/dashboard'; // Redirect to your active app
+    } catch (error) {
+      console.error("Google Auth Error:", error);
+      alert("تعذر تسجيل الدخول بواسطة Google: " + error.message);
+    }
+  };
+
+  // 2. Email / Password Handler (Register & Login)
+  window.handleEmailAuth = async function(e) {
+    e.preventDefault();
+    const emailInput = document.querySelector('#auth-form input[type="email"]');
+    const passwordInput = document.querySelector('#auth-form input[type="password"]');
+
+    if (!emailInput || !passwordInput) return;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    try {
+      if (window.currentAuthMode === 'register') {
+        const res = await createUserWithEmailAndPassword(auth, email, password);
+        console.log("Registration Success:", res.user);
+      } else {
+        const res = await signInWithEmailAndPassword(auth, email, password);
+        console.log("Login Success:", res.user);
+      }
+      window.location.href = '/dashboard'; // Redirect to your active app
+    } catch (error) {
+      console.error("Email Auth Error:", error);
+      alert("خطأ في بيانات الحساب: " + error.message);
+    }
+  };
 </script>
 </body>
 </html>
