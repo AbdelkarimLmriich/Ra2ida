@@ -1386,6 +1386,26 @@
     return allowedPattern.test(domain);
   }
 
+  function getFriendlyAuthErrorMessage(errorCode) {
+    switch (errorCode) {
+      case 'auth/email-already-in-use':
+        return 'هذا البريد مسجل لدينا بالفعل! هل تريد <button onclick="switchAuthTab(\'login\')" class="text-sky-400 underline font-bold">تسجيل الدخول</button>؟';
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+        return 'كلمة المرور أو البريد غير صحيح. يرجى التأكد وإعادة المحاولة.';
+      case 'auth/user-not-found':
+        return 'هذا البريد غير مسجل لدينا. هل تريد <button onclick="switchAuthTab(\'register\')" class="text-sky-400 underline font-bold">إنشاء حساب جديد</button>؟';
+      case 'auth/weak-password':
+        return 'كلمة المرور ضعيفة جداً. يجب أن تحتوي على 6 أحرف على الأقل.';
+      case 'auth/invalid-email':
+        return 'صيغة البريد الإلكتروني غير صحيحة.';
+      case 'auth/too-many-requests':
+        return 'تم محاولة الدخول عدة مرات بشكل خاطئ. يرجى الانتظار قليلاً وإعادة المحاولة.';
+      default:
+        return 'حدث خطأ غير متوقع. يرجى إعادة المحاولة لاحقاً.';
+    }
+  }
+
   // User's Exact Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDUR5OhENJjpQA24MaoQWw1WnOUTljRbis",
@@ -1433,7 +1453,7 @@
     const banner = document.getElementById('modal-banner');
     if (!banner) return;
 
-    banner.textContent = msg;
+    banner.innerHTML = msg;
     banner.classList.remove('hidden');
 
     if (type === 'success') {
@@ -1465,7 +1485,7 @@
       window.location.href = '/dashboard'; // Redirect to your active app
     } catch (error) {
       console.error("Google Auth Error:", error);
-      showModalBanner("تعذر تسجيل الدخول بـ Google: " + error.message, "error");
+      showModalBanner(getFriendlyAuthErrorMessage(error.code), "error");
     }
   };
 
@@ -1495,7 +1515,11 @@
         const user = userCredential.user;
 
         // 2. Send Verification Link
-        await sendEmailVerification(user);
+        const actionCodeSettings = {
+          url: window.location.origin + window.location.pathname + '?verified=true',
+          handleCodeInApp: true
+        };
+        await sendEmailVerification(user, actionCodeSettings);
 
         showModalBanner("تم إنشاء الحساب! أرسلنا رابط تفعيل إلى بريدك الإلكتروني.", "success");
 
@@ -1518,9 +1542,22 @@
       }
     } catch (error) {
       console.error("Auth Error:", error);
-      showModalBanner("حدث خطأ أثناء العملية: " + error.message, "error");
+      showModalBanner(getFriendlyAuthErrorMessage(error.code), "error");
     }
   };
+  window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('verified') === 'true') {
+      if (window.openAuthModal) {
+        window.openAuthModal('login');
+        setTimeout(() => {
+          showModalBanner('🎉 تم تأكيد بريدك الإلكتروني بنجاح! يمكنك الآن تسجيل الدخول.', 'success');
+        }, 300);
+      }
+      // Clean URL without reloading page
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  });
 </script>
 </body>
 </html>
