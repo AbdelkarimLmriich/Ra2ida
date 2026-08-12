@@ -1341,8 +1341,10 @@
 
     <!-- EMAIL / PASSWORD FORM -->
     <form id="auth-form" onsubmit="handleEmailAuth(event)" class="space-y-3.5">
+      <div id="modal-banner" class="hidden rounded-xl p-3 text-xs font-cairo text-center transition-all duration-300 mb-3"></div>
       <div>
         <input type="email" required placeholder="البريد الإلكتروني" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
+        <p id="email-field-error" class="hidden text-[11px] text-rose-400 font-cairo mt-1.5 text-right flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> <span id="email-error-text"></span></p>
       </div>
       <div>
         <input type="password" required placeholder="كلمة المرور" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
@@ -1401,16 +1403,69 @@
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
 
+  function showInlineEmailError(msg) {
+    const emailInput = document.querySelector('#auth-form input[type="email"]');
+    const errorEl = document.getElementById('email-field-error');
+    const errorText = document.getElementById('email-error-text');
+
+    if (emailInput) {
+      emailInput.style.borderColor = '#F43F5E'; // Rose border
+      emailInput.style.boxShadow = '0 0 12px rgba(244,63,94,0.2)';
+    }
+    if (errorEl && errorText) {
+      errorText.textContent = msg;
+      errorEl.classList.remove('hidden');
+    }
+  }
+
+  function clearInlineEmailError() {
+    const emailInput = document.querySelector('#auth-form input[type="email"]');
+    const errorEl = document.getElementById('email-field-error');
+
+    if (emailInput) {
+      emailInput.style.borderColor = 'rgba(255,255,255,0.1)';
+      emailInput.style.boxShadow = 'none';
+    }
+    if (errorEl) errorEl.classList.add('hidden');
+  }
+
+  function showModalBanner(msg, type = 'error') {
+    const banner = document.getElementById('modal-banner');
+    if (!banner) return;
+
+    banner.textContent = msg;
+    banner.classList.remove('hidden');
+
+    if (type === 'success') {
+      banner.style.background = 'rgba(16, 185, 129, 0.15)';
+      banner.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+      banner.style.color = '#6EE7B7';
+    } else {
+      banner.style.background = 'rgba(244, 63, 94, 0.15)';
+      banner.style.border = '1px solid rgba(244, 63, 94, 0.4)';
+      banner.style.color = '#FDA4AF';
+    }
+  }
+
+  function clearModalBanner() {
+    const banner = document.getElementById('modal-banner');
+    if (banner) banner.classList.add('hidden');
+  }
+
+  // Clear inline error on typing
+  document.querySelector('#auth-form input[type="email"]')?.addEventListener('input', clearInlineEmailError);
+
   // 1. Google Sign-In Handler
   window.handleGoogleSignIn = async function(e) {
     if (e) e.preventDefault();
+    clearModalBanner();
     try {
       const result = await signInWithPopup(auth, googleProvider);
       console.log("Google Login Success:", result.user);
       window.location.href = '/dashboard'; // Redirect to your active app
     } catch (error) {
       console.error("Google Auth Error:", error);
-      alert("تعذر تسجيل الدخول بواسطة Google: " + error.message);
+      showModalBanner("تعذر تسجيل الدخول بـ Google: " + error.message, "error");
     }
   };
 
@@ -1424,9 +1479,12 @@
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
+    clearModalBanner();
+    clearInlineEmailError();
+
     // Enforce Allowlist check
     if (!isAllowedEmailProvider(email)) {
-      alert("عذراً، يُسمح التسجيل فقط باستخدام بريد Gmail أو Outlook/Hotmail أو Yahoo لحماية الحسابات.");
+      showInlineEmailError("عذراً، يُسمح التسجيل فقط باستخدام بريد Gmail أو Outlook أو Yahoo");
       return;
     }
 
@@ -1439,12 +1497,10 @@
         // 2. Send Verification Link
         await sendEmailVerification(user);
 
-        alert("تم إنشاء الحساب بنجاح! 📧\nأرسلنا رابط تأكيد إلى بريدك الإلكتروني (" + email + ").\nيرجى فتح صندوق الوارد والضغط على رابط التفعيل للبدء.");
+        showModalBanner("تم إنشاء الحساب! أرسلنا رابط تفعيل إلى بريدك الإلكتروني.", "success");
 
-        // Sign out until verified & close modal
+        // Sign out until verified & keep modal open so user sees banner
         await signOut(auth);
-        if (window.closeAuthModal) closeAuthModal();
-
       } else {
         // Login logic
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -1452,7 +1508,7 @@
 
         // 3. Check Verification Status on Login
         if (!user.emailVerified) {
-          alert("حسابك غير مفعل بعد! ⚠️\nيرجى مراجعة بريدك الإلكتروني والضغط على رابط التفعيل الذي أرسلناه لك أولاً.");
+          showModalBanner("حسابك غير مفعل بعد. يرجى مراجعة بريدك الإلكتروني والتفعيل أولاً.", "error");
           await signOut(auth);
           return;
         }
@@ -1462,7 +1518,7 @@
       }
     } catch (error) {
       console.error("Auth Error:", error);
-      alert("حدث خطأ أثناء العملية: " + error.message);
+      showModalBanner("حدث خطأ أثناء العملية: " + error.message, "error");
     }
   };
 </script>
