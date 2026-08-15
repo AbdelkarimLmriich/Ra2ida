@@ -1391,6 +1391,7 @@
     signInWithEmailAndPassword,
     sendPasswordResetEmail,
     sendEmailVerification,
+    applyActionCode,
     signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -1440,7 +1441,7 @@
     const email = emailInput.value.trim();
     try {
       await sendPasswordResetEmail(auth, email);
-      showModalBanner("📧 أرسلنا رابط إعادة ضبط كلمة المرور إلى بريدك الإلكتروني (" + email + ").", "success");
+      showModalBanner("تم إرسال رابط إعادة ضبط كلمة المرور إلى بريدك الإلكتروني.", "success");
     } catch (error) {
       console.error("Reset Password Error:", error);
       showModalBanner("عذراً، تعذر إرسال رابط الضبط. التأكد من صحة البريد.", "error");
@@ -1495,16 +1496,21 @@
     const banner = document.getElementById('modal-banner');
     if (!banner) return;
 
-    banner.innerHTML = msg;
+    const successIcon = `<svg class="w-4 h-4 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
+    const errorIcon = `<svg class="w-4 h-4 shrink-0 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+
+    const activeIcon = type === 'success' ? successIcon : errorIcon;
+
+    banner.innerHTML = `<div class="flex items-center justify-center gap-2"><span>${activeIcon}</span><span>${msg}</span></div>`;
     banner.classList.remove('hidden');
 
     if (type === 'success') {
-      banner.style.background = 'rgba(16, 185, 129, 0.15)';
-      banner.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+      banner.style.background = 'rgba(16, 185, 129, 0.12)';
+      banner.style.border = '1px solid rgba(16, 185, 129, 0.35)';
       banner.style.color = '#6EE7B7';
     } else {
-      banner.style.background = 'rgba(244, 63, 94, 0.15)';
-      banner.style.border = '1px solid rgba(244, 63, 94, 0.4)';
+      banner.style.background = 'rgba(244, 63, 94, 0.12)';
+      banner.style.border = '1px solid rgba(244, 63, 94, 0.35)';
       banner.style.color = '#FDA4AF';
     }
   }
@@ -1571,7 +1577,7 @@
       // 2. Try Sending Verification Link Safely
       try {
         await sendEmailVerification(user);
-        showModalBanner("تم إنشاء الحساب بنجاح! 📧 أرسلنا رابط تفعيل إلى بريدك الإلكتروني.", "success");
+        showModalBanner("تم إنشاء الحساب بنجاح. أرسلنا رابط تفعيل إلى بريدك الإلكتروني.", "success");
         document.getElementById('resend-verification-container')?.classList.add('hidden');
       } catch (sendErr) {
         console.error("Verification send error:", sendErr);
@@ -1588,7 +1594,7 @@
         const user = userCredential.user;
     
         if (!user.emailVerified) {
-          showModalBanner("حسابك غير مفعل بعد. يرجى مراجعة بريدك الإلكتروني أو طلب رابط جديد بالأسفل.", "error");
+          showModalBanner("حسابك غير مفعل بعد. يرجى تأكيد بريدك الإلكتروني أولاً.", "error");
           document.getElementById('resend-verification-container')?.classList.remove('hidden');
           await signOut(auth);
           return;
@@ -1620,7 +1626,7 @@
       const userCredential = await signInWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
       await sendEmailVerification(userCredential.user);
       await signOut(auth);
-      showModalBanner("تم إرسال رابط تفعيل جديد بنجاح! 📧 يرجى مراجعة صندوق الوارد والبريد غير الهام (Spam).", "success");
+      showModalBanner("تم إرسال رابط تفعيل جديد إلى بريدك الإلكتروني.", "success");
 
       // Start 60-second cooldown timer
       let secondsLeft = 60;
@@ -1643,16 +1649,31 @@
       if (resendBtn) resendBtn.disabled = false;
     }
   };
-  window.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('verified') === 'true') {
-      if (window.openAuthModal) {
-        window.openAuthModal('login');
-        setTimeout(() => {
-          showModalBanner('🎉 تم تأكيد بريدك الإلكتروني بنجاح! يمكنك الآن تسجيل الدخول.', 'success');
-        }, 300);
+    const mode = urlParams.get('mode');
+    const oobCode = urlParams.get('oobCode');
+
+    // 1. Handle Email Verification Return
+    if (mode === 'verifyEmail' && oobCode) {
+      try {
+        await applyActionCode(auth, oobCode);
+        if (window.openAuthModal) {
+          window.openAuthModal('login');
+          setTimeout(() => {
+            showModalBanner('تم تأكيد بريدك الإلكتروني بنجاح. يمكنك الآن تسجيل الدخول.', 'success');
+          }, 350);
+        }
+      } catch (error) {
+        console.error("Verification Code Error:", error);
+        if (window.openAuthModal) {
+          window.openAuthModal('login');
+          setTimeout(() => {
+            showModalBanner('عذراً، رابط التفعيل منتهي الصلاحية أو تم استخدامه مسبقاً.', 'error');
+          }, 350);
+        }
       }
-      // Clean URL without reloading page
+      // Clean query parameters from URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   });
