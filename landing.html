@@ -1439,11 +1439,7 @@
 
     const email = emailInput.value.trim();
     try {
-      const actionCodeSettings = {
-        url: window.location.origin + window.location.pathname + '?reset=true',
-        handleCodeInApp: true
-      };
-      await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      await sendPasswordResetEmail(auth, email);
       showModalBanner("📧 أرسلنا رابط إعادة ضبط كلمة المرور إلى بريدك الإلكتروني (" + email + ").", "success");
     } catch (error) {
       console.error("Reset Password Error:", error);
@@ -1466,6 +1462,7 @@
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   const auth = getAuth(app);
+  auth.useDeviceLanguage();
   const googleProvider = new GoogleAuthProvider();
 
   function showInlineEmailError(msg) {
@@ -1573,16 +1570,13 @@
     
       // 2. Try Sending Verification Link Safely
       try {
-        const actionCodeSettings = {
-          url: window.location.origin + window.location.pathname + '?verified=true',
-          handleCodeInApp: true
-        };
-        await sendEmailVerification(user, actionCodeSettings);
+        await sendEmailVerification(user);
         showModalBanner("تم إنشاء الحساب بنجاح! 📧 أرسلنا رابط تفعيل إلى بريدك الإلكتروني.", "success");
         document.getElementById('resend-verification-container')?.classList.add('hidden');
       } catch (sendErr) {
-        console.warn("Verification send error:", sendErr);
-        showModalBanner("تم إنشاء حسابك بنجاح! لكن تعذر إرسال بريد التفعيل تلقائياً. اضغط على زر إعادة الإرسال بالأسفل.", "error");
+        console.error("Verification send error:", sendErr);
+        const errorMsg = getFriendlyAuthErrorMessage(sendErr.code);
+        showModalBanner("تم إنشاء الحساب، لكن تعذر إرسال الرابط: " + errorMsg, "error");
         document.getElementById('resend-verification-container')?.classList.remove('hidden');
       }
     
@@ -1608,28 +1602,45 @@
     }
   };
 
+  let resendCooldownTimer = null;
+
   window.handleResendVerification = async function() {
     const emailInput = document.querySelector('#auth-form input[type="email"]');
     const passwordInput = document.querySelector('#auth-form input[type="password"]');
-  
+    const resendBtn = document.querySelector('#resend-verification-container button');
+
     if (!emailInput || !passwordInput || !emailInput.value.trim() || !passwordInput.value) {
       showModalBanner("يرجى إدخال البريد الإلكتروني وكلمة المرور لإعادة إرسال رابط التفعيل.", "error");
       return;
     }
-  
+
+    if (resendBtn) resendBtn.disabled = true;
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
-      const actionCodeSettings = {
-        url: window.location.origin + window.location.pathname + '?verified=true',
-        handleCodeInApp: true
-      };
-      await sendEmailVerification(userCredential.user, actionCodeSettings);
+      await sendEmailVerification(userCredential.user);
       await signOut(auth);
-      showModalBanner("تم إعادة إرسال رابط التفعيل بنجاح! 📧 يرجى مراجعة صندوق الوارد.", "success");
-      document.getElementById('resend-verification-container')?.classList.add('hidden');
+      showModalBanner("تم إرسال رابط تفعيل جديد بنجاح! 📧 يرجى مراجعة صندوق الوارد والبريد غير الهام (Spam).", "success");
+
+      // Start 60-second cooldown timer
+      let secondsLeft = 60;
+      if (resendBtn) {
+        resendBtn.innerHTML = `<span>انتظر (${secondsLeft}) ثانية لإعادة الإرسال</span>`;
+        resendCooldownTimer = setInterval(() => {
+          secondsLeft--;
+          if (secondsLeft <= 0) {
+            clearInterval(resendCooldownTimer);
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h11"/><polyline points="22 7 12 13 2 7"/><polyline points="16 19 19 22 24 17"/></svg><span>لم يصلك البريد؟ إرسال رابط تفعيل جديد</span>`;
+          } else {
+            resendBtn.innerHTML = `<span>انتظر (${secondsLeft}) ثانية لإعادة الإرسال</span>`;
+          }
+        }, 1000);
+      }
     } catch (err) {
       console.error("Resend Error:", err);
       showModalBanner("تعذر إعادة الإرسال: " + getFriendlyAuthErrorMessage(err.code), "error");
+      if (resendBtn) resendBtn.disabled = false;
     }
   };
   window.addEventListener('DOMContentLoaded', () => {
