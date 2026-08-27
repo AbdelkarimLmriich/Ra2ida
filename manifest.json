@@ -1,0 +1,26 @@
+{
+  "name": "منصة رائدة — روائز تقويم القراءة والموضعة (TaRL)",
+  "short_name": "رائدة TaRL",
+  "description": "منصة تقويم وتفريغ روائز القراءة والموضعة المعتمدة لمؤسسات الريادة بالمغرب",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0B0F19",
+  "theme_color": "#4F46E5",
+  "orientation": "any",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

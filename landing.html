@@ -1356,7 +1356,13 @@
         <p id="email-field-error" class="hidden text-[11px] text-rose-400 font-cairo mt-1.5 text-right flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> <span id="email-error-text"></span></p>
       </div>
       <div>
-        <input type="password" id="auth-password-input" name="password" autocomplete="current-password" required placeholder="كلمة المرور" class="w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
+        <div class="relative">
+          <input type="password" id="auth-password-input" name="password" autocomplete="current-password" required placeholder="كلمة المرور" class="w-full rounded-xl px-4 py-3 pl-11 text-sm text-white focus:outline-none transition-colors font-tajawal text-right" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
+          <button type="button" onclick="togglePasswordVisibility()" class="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition-colors p-1" title="إظهار / إخفاء">
+            <svg id="pw-eye-open" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg id="pw-eye-closed" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
         <button type="button" id="forgot-password-btn" onclick="handleForgotPassword()" class="text-[11px] text-sky-400 font-cairo hover:underline mt-1.5 block mr-auto">هل نسيت كلمة المرور؟</button>
       </div>
       <div id="resend-verification-container" class="hidden text-center mt-2.5 pt-2 border-t border-white/10">
@@ -1392,6 +1398,7 @@
     sendPasswordResetEmail,
     sendEmailVerification,
     applyActionCode,
+    confirmPasswordReset,
     signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -1520,20 +1527,53 @@
     if (banner) banner.classList.add('hidden');
   }
 
+  window.togglePasswordVisibility = function() {
+    const input = document.getElementById('auth-password-input');
+    const eyeOpen = document.getElementById('pw-eye-open');
+    const eyeClosed = document.getElementById('pw-eye-closed');
+    if (!input) return;
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      eyeOpen?.classList.remove('hidden');
+      eyeClosed?.classList.add('hidden');
+    } else {
+      input.type = 'password';
+      eyeOpen?.classList.add('hidden');
+      eyeClosed?.classList.remove('hidden');
+    }
+  };
+
+  function setAuthButtonLoading(loading) {
+    const btn = document.getElementById('auth-submit-btn');
+    if (!btn) return;
+    btn.disabled = loading;
+    if (loading) {
+      btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>`;
+    } else {
+      btn.innerHTML = window.currentAuthMode === 'register' ? `<span>إنشاء حساب مجاني</span>` : `<span>تسجيل الدخول</span>`;
+    }
+  }
+
   // Clear inline error on typing
   document.querySelector('#auth-form input[type="email"]')?.addEventListener('input', clearInlineEmailError);
+  document.querySelector('#auth-form input[type="password"]')?.addEventListener('input', clearModalBanner);
 
   // 1. Google Sign-In Handler
   window.handleGoogleSignIn = async function(e) {
     if (e) e.preventDefault();
     clearModalBanner();
+    setAuthButtonLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
       console.log("Google Login Success:", result.user);
-      window.location.href = '/dashboard'; // Redirect to your active app
+      const targetAppURL = './index.html';
+      window.location.href = targetAppURL;
     } catch (error) {
       console.error("Google Auth Error:", error);
       showModalBanner(getFriendlyAuthErrorMessage(error.code), "error");
+    } finally {
+      setAuthButtonLoading(false);
     }
   };
 
@@ -1556,55 +1596,62 @@
       return;
     }
 
-    if (window.currentAuthMode === 'register') {
-      if (!isStrongPassword(password)) {
-        showModalBanner("كلمة المرور ضعيفة! يجب أن تحتوي على 8 أحرف على الأقل وتجمع بين الحروف والأرقام.", "error");
-        return;
-      }
-    
-      // 1. Create User First
-      let userCredential;
-      try {
-        userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      } catch (createErr) {
-        console.error("Account Creation Error:", createErr);
-        showModalBanner(getFriendlyAuthErrorMessage(createErr.code), "error");
-        return;
-      }
-    
-      const user = userCredential.user;
-    
-      // 2. Try Sending Verification Link Safely
-      try {
-        await sendEmailVerification(user);
-        showModalBanner("تم إنشاء الحساب بنجاح. أرسلنا رابط تفعيل إلى بريدك الإلكتروني.", "success");
-        document.getElementById('resend-verification-container')?.classList.add('hidden');
-      } catch (sendErr) {
-        console.error("Verification send error:", sendErr);
-        const errorMsg = getFriendlyAuthErrorMessage(sendErr.code);
-        showModalBanner("تم إنشاء الحساب، لكن تعذر إرسال الرابط: " + errorMsg, "error");
-        document.getElementById('resend-verification-container')?.classList.remove('hidden');
-      }
-    
-      await signOut(auth);
-    } else {
-      // Login logic
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-    
-        if (!user.emailVerified) {
-          showModalBanner("حسابك غير مفعل بعد. يرجى تأكيد بريدك الإلكتروني أولاً.", "error");
-          document.getElementById('resend-verification-container')?.classList.remove('hidden');
-          await signOut(auth);
+    setAuthButtonLoading(true);
+
+    try {
+      if (window.currentAuthMode === 'register') {
+        if (!isStrongPassword(password)) {
+          showModalBanner("كلمة المرور ضعيفة! يجب أن تحتوي على 8 أحرف على الأقل وتجمع بين الحروف والأرقام.", "error");
           return;
         }
-    
-        window.location.href = '/dashboard';
-      } catch (loginErr) {
-        console.error("Login Error:", loginErr);
-        showModalBanner(getFriendlyAuthErrorMessage(loginErr.code), "error");
+      
+        // 1. Create User First
+        let userCredential;
+        try {
+          userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        } catch (createErr) {
+          console.error("Account Creation Error:", createErr);
+          showModalBanner(getFriendlyAuthErrorMessage(createErr.code), "error");
+          return;
+        }
+      
+        const user = userCredential.user;
+      
+        // 2. Try Sending Verification Link Safely
+        try {
+          await sendEmailVerification(user);
+          showModalBanner("تم إنشاء الحساب بنجاح. أرسلنا رابط تفعيل إلى بريدك الإلكتروني.", "success");
+          document.getElementById('resend-verification-container')?.classList.add('hidden');
+        } catch (sendErr) {
+          console.error("Verification send error:", sendErr);
+          const errorMsg = getFriendlyAuthErrorMessage(sendErr.code);
+          showModalBanner("تم إنشاء الحساب، لكن تعذر إرسال الرابط: " + errorMsg, "error");
+          document.getElementById('resend-verification-container')?.classList.remove('hidden');
+        }
+      
+        await signOut(auth);
+      } else {
+        // Login logic
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+      
+          if (!user.emailVerified) {
+            showModalBanner("حسابك غير مفعل بعد. يرجى تأكيد بريدك الإلكتروني أولاً.", "error");
+            document.getElementById('resend-verification-container')?.classList.remove('hidden');
+            await signOut(auth);
+            return;
+          }
+      
+          const targetAppURL = './index.html';
+          window.location.href = targetAppURL;
+        } catch (loginErr) {
+          console.error("Login Error:", loginErr);
+          showModalBanner(getFriendlyAuthErrorMessage(loginErr.code), "error");
+        }
       }
+    } finally {
+      setAuthButtonLoading(false);
     }
   };
 
@@ -1674,6 +1721,19 @@
         }
       }
       // Clean query parameters from URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // 2. Handle Password Reset Return
+    if (mode === 'resetPassword' && oobCode) {
+      if (window.openAuthModal) {
+        window.openAuthModal('login');
+        const pwInput = document.querySelector('#auth-form input[type="password"]');
+        if (pwInput) {
+          showModalBanner("يرجى إدخال كلمة المرور الجديدة في حقل كلمة المرور لحفظ التعديل.", "success");
+          pwInput.focus();
+        }
+      }
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   });
