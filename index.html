@@ -88,11 +88,15 @@
             --noise-opacity: 0.055;
         }
 
-        * { box-sizing: border-box; }
+        * { 
+            box-sizing: border-box; 
+            letter-spacing: normal !important;
+        }
         body {
             background: var(--bg);
             color: var(--text-primary);
             font-family: 'Tajawal', sans-serif;
+            letter-spacing: normal !important;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
@@ -167,7 +171,7 @@
         .badge-3d {
             position: relative; display: inline-flex; align-items: center; gap: 5px;
             font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 11px;
-            padding: 4px 12px; border-radius: 999px; letter-spacing: 0.01em; white-space: nowrap;
+            padding: 4px 12px; border-radius: 999px; white-space: nowrap;
         }
         .badge-emerald {
             background: linear-gradient(160deg, #6EE7B7, #059669); color: #053323;
@@ -398,9 +402,9 @@
         </button>
 
         <div class="mb-8 px-2 mt-4 flex items-center overflow-hidden whitespace-nowrap">
-            <h1 class="font-cairo font-black text-xl text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+            <h1 class="font-cairo font-black text-xl text-slate-900 dark:text-white  flex items-center gap-3">
                 <svg class="w-8 h-8 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                <span id="sidebar-title" class="font-cairo font-black text-xl tracking-tight transition-all duration-300 overflow-hidden">منصة رائدة</span>
+                <span id="sidebar-title" class="font-cairo font-black text-xl  transition-all duration-300 overflow-hidden">منصة رائدة</span>
             </h1>
         </div>
 
@@ -446,7 +450,7 @@
 
     <header class="bento-card glass rounded-3xl p-6 md:p-8 mb-8 border border-white/40 dark:border-white/10 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-10">
         <div>
-            <h2 class="font-cairo font-black text-2xl md:text-3xl text-slate-900 dark:text-white tracking-tight">لوحة القيادة</h2>
+            <h2 class="font-cairo font-black text-2xl md:text-3xl text-slate-900 dark:text-white ">لوحة القيادة</h2>
             <p class="text-slate-500 mt-1 font-medium text-sm dark:text-slate-400">نظرة عامة على تقدم التقويمات وأداء جميع الأقسام.</p>
         </div>
         <div class="hidden md:flex bg-indigo-50/80 text-indigo-600 dark:bg-white/10 dark:text-indigo-300 dark:border-white/10 px-4 py-2 rounded-2xl font-cairo font-bold text-xs items-center gap-2 border border-indigo-100/80 shadow-sm backdrop-blur-md transition-all">
@@ -508,7 +512,7 @@
             <div id="classes-list-view" class="flex flex-col h-full w-full">
                 <header class="bento-card glass rounded-3xl p-6 md:p-8 mb-8 border border-white/40 dark:border-white/10 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <h2 class="font-cairo font-black text-2xl md:text-3xl text-slate-900 dark:text-white tracking-tight">إدارة الأقسام</h2>
+                        <h2 class="font-cairo font-black text-2xl md:text-3xl text-slate-900 dark:text-white ">إدارة الأقسام</h2>
                         <p class="text-slate-500 mt-1 font-medium text-sm dark:text-slate-400">قم بإضافة وتسيير الأقسام المسندة إليك</p>
                     </div>
                     <div id="classes-header-actions" class="flex flex-wrap gap-3 transition-opacity duration-300">
@@ -546,7 +550,7 @@
             <div id="class-roster-view" class="hidden flex flex-col h-full w-full">
                 <header class="bento-card glass rounded-3xl p-6 md:p-8 mb-8 border border-white/40 dark:border-white/10 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <h2 id="roster-class-name" class="font-cairo font-black text-2xl md:text-3xl text-slate-900 dark:text-white tracking-tight">القسم</h2>
+                        <h2 id="roster-class-name" class="font-cairo font-black text-2xl md:text-3xl text-slate-900 dark:text-white ">القسم</h2>
                         <p id="roster-class-count" class="text-slate-500 mt-1 font-medium text-sm dark:text-slate-400">عدد التلاميذ: 0</p>
                     </div>
                     <div class="flex gap-3">
@@ -763,7 +767,7 @@
         
         <div id="analytics-screen" class="screen-section hidden p-8 flex-col min-h-full overflow-y-auto relative">
     <header class="flex flex-col items-center justify-center mb-8 shrink-0 text-center w-full">
-        <h2 id="analytics-main-title" class="text-3xl font-bold text-slate-800 tracking-tight transition-all mb-2 dark:text-slate-100">التحليل والتقارير</h2>
+        <h2 id="analytics-main-title" class="text-3xl font-bold text-slate-800  transition-all mb-2 dark:text-slate-100">التحليل والتقارير</h2>
         <p class="text-slate-500 font-medium mb-8 dark:text-slate-400">نظرة تفصيلية على أداء التلاميذ ومكامن التعثر</p>
         
         <div id="analytics-navigation-hub" class="flex flex-col items-center justify-center gap-4 w-full max-w-4xl">
@@ -881,7 +885,7 @@
         
         <div id="settings-screen" class="screen-section hidden flex-1 flex-col w-full min-h-full p-6 md:p-8 overflow-y-auto">
             <header class="mb-6">
-                <h2 class="font-cairo font-black text-2xl md:text-3xl text-slate-900 dark:text-white tracking-tight">الإعدادات وتخصيص المنصة</h2>
+                <h2 class="font-cairo font-black text-2xl md:text-3xl text-slate-900 dark:text-white ">الإعدادات وتخصيص المنصة</h2>
                 <p class="text-slate-500 mt-1 font-medium text-sm dark:text-slate-400">إدارة الهوية المؤسساتية، اختصارات التقويم، ومظهر الواجهة</p>
             </header>
 
@@ -1134,7 +1138,7 @@
             <div class="empty-state-icon">
                 <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
             </div>
-            <h1 class="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight dark:text-slate-100">رفع لائحة التلاميذ</h1>
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-4  dark:text-slate-100">رفع لائحة التلاميذ</h1>
             <p class="text-slate-500 text-lg mb-10 font-medium dark:text-slate-400">يرجى رفع ملف بصيغة Excel (.xlsx) يحتوي على أسماء وأرقام مسار الخاصة بالتلاميذ.</p>
             
             <div id="drop-zone" class="border-2 border-dashed border-indigo-200 rounded-3xl p-10 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-400 transition-all cursor-pointer shadow-sm dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:border-indigo-400/50">
@@ -1179,7 +1183,7 @@
             <div class="p-6 border-b border-slate-100 bg-transparent flex flex-col gap-4 shrink-0 dark:border-white/10">
                 <div class="flex justify-between items-center">
                     <div>
-                        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 mb-1 dark:text-slate-100">قائمة التقييم</h1>
+                        <h1 class="text-2xl font-extrabold  text-slate-900 mb-1 dark:text-slate-100">قائمة التقييم</h1>
                         <p class="text-sm text-slate-500 font-medium dark:text-slate-400">الرجاء اختيار تلميذ للبدء</p>
                     </div>
                     <button id="btn-export" class="hidden p-3 rounded-xl transition-all shadow-sm border border-transparent bg-emerald-100 text-emerald-600 hover:bg-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/20 dark:hover:bg-emerald-500 dark:hover:text-white dark:hover:shadow-[0_0_20px_rgba(52,211,153,0.5)]" title="تصدير النتائج (.xlsx)">
@@ -1202,11 +1206,11 @@
         </aside>
 
         <!-- Main Workspace -->
-        <main class="flex-1 w-full min-w-0 relative flex flex-col overflow-hidden bg-transparent">
+        <div class="flex-1 w-full min-w-0 relative flex flex-col overflow-hidden bg-transparent">
             
             <header class="h-24 px-10 flex items-center justify-between z-10 shrink-0">
                 <div id="current-student-info" class="hidden opacity-0 translate-y-[-10px]">
-                    <p class="text-sm font-bold text-indigo-500 tracking-wider mb-1">التقييم الحالي</p>
+                    <p class="text-sm font-bold text-indigo-500  mb-1">التقييم الحالي</p>
                     <div class="flex items-center gap-3">
                         <h2 class="text-3xl font-bold text-slate-900 dark:text-slate-100" id="header-student-name">اسم التلميذ</h2>
                     </div>
@@ -1226,8 +1230,8 @@
                     
                     <div class="flex justify-between items-start mb-10">
                         <div class="overflow-hidden max-w-lg">
-                            <span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 font-bold tracking-wide text-xs rounded-lg mb-3 border border-indigo-100" id="stage-badge">المرحلة</span>
-                            <h3 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-tight dark:text-slate-100" id="stage-title">العنوان</h3>
+                            <span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 font-bold  text-xs rounded-lg mb-3 border border-indigo-100" id="stage-badge">المرحلة</span>
+                            <h3 class="text-4xl font-extrabold text-slate-900  leading-tight dark:text-slate-100" id="stage-title">العنوان</h3>
                         </div>
                         
                         <div id="timer-container" class="hidden flex flex-col items-center justify-center w-32 shrink-0">
@@ -1289,10 +1293,10 @@
                 </div>
                 
                 <div id="completion-card" class="surface-card surface-card--hero rounded-[28px] p-16 w-full max-w-2xl hidden flex-col items-center text-center transition-all duration-500">
-                    <h3 class="text-4xl font-extrabold text-slate-900 mb-8 tracking-tight dark:text-slate-100">اكتمل التقييم بنجاح</h3>
+                    <h3 class="text-4xl font-extrabold text-slate-900 mb-8  dark:text-slate-100">اكتمل التقييم بنجاح</h3>
                     
                     <div class="inline-flex flex-col items-center justify-center p-10 rounded-3xl w-full mb-10 transition-all bg-white border border-slate-100 shadow-sm dark:bg-[#0B0F19]/80 dark:backdrop-blur-2xl dark:border-white/10 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-                        <span class="text-sm font-bold text-slate-500 dark:text-slate-300 uppercase tracking-widest mb-4">النتيجة النهائية للطالب</span>
+                        <span class="text-sm font-bold text-slate-500 dark:text-slate-300 uppercase  mb-4">النتيجة النهائية للطالب</span>
                         <span class="font-extrabold text-6xl text-indigo-600" id="final-level-display">اللبنة 1</span>
                     </div>
                     
@@ -1306,7 +1310,7 @@
                     <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h3 class="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight dark:text-slate-100">اكتمل التقييم بنجاح!</h3>
+                    <h3 class="text-4xl font-extrabold text-slate-900 mb-4  dark:text-slate-100">اكتمل التقييم بنجاح!</h3>
                     <p class="text-slate-500 mb-10 font-medium dark:text-slate-400">تم الانتهاء من تقييم جميع تلاميذ هذا القسم، يمكنك الآن تحميل النتائج.</p>
                     <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto">
                         <button id="btn-export-large" class="btn btn-success flex-1 py-4 font-bold text-lg gap-3">
@@ -1322,7 +1326,9 @@
             </div>
             
         </div>
-    </main>
+    </div>
+</div>
+</main>
 </div>
 
 <!-- Delete Confirmation Modal -->
@@ -1342,7 +1348,7 @@
 
     <!-- Custom Alert Modal -->
     <div id="custom-alert-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-lg dark:bg-[#07090E]/80 p-4">
-        <div class="modal-panel w-full max-w-md bg-white border border-slate-200/80 dark:border-white/10 relative z-10 flex flex-col p-8 text-center transform transition-all rounded-[28px] shadow-2xl">
+        <div class="modal-panel w-full max-w-md border border-slate-200/80 dark:border-white/10 relative z-10 flex flex-col p-8 text-center transform transition-all rounded-[28px] shadow-2xl">
             <div class="w-16 h-16 bg-amber-50 dark:bg-amber-950/40 text-amber-500 border border-amber-200 dark:border-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
             </div>
@@ -1354,7 +1360,7 @@
 
     <!-- Custom Confirm Modal -->
     <div id="custom-confirm-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-lg dark:bg-[#07090E]/80 p-4">
-        <div class="modal-panel w-full max-w-md bg-white border border-slate-200/80 dark:border-white/10 relative z-10 flex flex-col p-8 text-center transform transition-all rounded-[28px] shadow-2xl">
+        <div class="modal-panel w-full max-w-md border border-slate-200/80 dark:border-white/10 relative z-10 flex flex-col p-8 text-center transform transition-all rounded-[28px] shadow-2xl">
             <div class="w-16 h-16 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-500 border border-indigo-200 dark:border-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
@@ -1369,7 +1375,7 @@
 
     <!-- Student Profile Modal -->
     <div id="student-profile-modal" class="hidden fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/60 backdrop-blur-lg p-4">
-        <div class="modal-panel bg-white rounded-[28px] w-full max-w-md relative z-10 overflow-hidden flex flex-col p-8 text-right transform transition-all">
+        <div class="modal-panel rounded-[28px] w-full max-w-md relative z-10 overflow-hidden flex flex-col p-8 text-right transform transition-all">
             <div class="flex justify-between items-center mb-6" dir="rtl">
                 <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100">الملف الشخصي للتلميذ</h3>
                 <button onclick="document.getElementById('student-profile-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 dark:text-slate-300 transition-colors p-2 rounded-full hover:bg-slate-200">
@@ -1446,6 +1452,7 @@
                     const isAssessing = assessmentScreen && !assessmentScreen.classList.contains('hidden');
 
                     if (isAssessing) {
+                        window.pendingAppReload = true;
                         if (typeof window.showToast === 'function') {
                             window.showToast('تم تنزيل تحديث جديد في الخلفية، سيتم تفعيله عند الانتقال بين الشاشات.', 'info');
                         }

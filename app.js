@@ -3204,14 +3204,17 @@ window.checkCompletion = function checkCompletion() {
         let html = `
         <!-- Tabs Header -->
         <div class="flex p-1 bg-slate-100 dark:bg-white/5 rounded-2xl mb-4 shrink-0 shadow-inner">
-            <button id="tab-inprogress" onclick="window.switchInsightTab('inprogress')" class="insight-tab flex-1 py-2 text-xs font-bold rounded-xl bg-white dark:bg-white/10 text-indigo-700 dark:text-white shadow-sm border border-slate-200/50 dark:border-transparent transition-all flex items-center justify-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> قيد الإنجاز
+            <button id="tab-inprogress" onclick="window.switchInsightTab('inprogress')" class="insight-tab flex-1 py-2 text-xs font-bold rounded-xl bg-white dark:bg-white/10 text-indigo-600 dark:text-white shadow-sm border border-slate-200/50 dark:border-white/10 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span>قيد الإنجاز</span>
             </button>
-            <button id="tab-notstarted" onclick="window.switchInsightTab('notstarted')" class="insight-tab flex-1 py-2 text-xs font-bold rounded-xl text-slate-400 dark:text-white/40 hover:text-slate-600 dark:hover:text-white/70 transition-all flex items-center justify-center gap-1.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> لم تبدأ
+            <button id="tab-notstarted" onclick="window.switchInsightTab('notstarted')" class="insight-tab flex-1 py-2 text-xs font-bold rounded-xl text-slate-500 dark:text-white/40 hover:text-slate-700 dark:hover:text-white/70 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>لم تبدأ</span>
             </button>
-            <button id="tab-completed" onclick="window.switchInsightTab('completed')" class="insight-tab flex-1 py-2 text-xs font-bold rounded-xl text-slate-400 dark:text-white/40 hover:text-slate-600 dark:hover:text-white/70 transition-all flex items-center justify-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> مكتملة
+            <button id="tab-completed" onclick="window.switchInsightTab('completed')" class="insight-tab flex-1 py-2 text-xs font-bold rounded-xl text-slate-500 dark:text-white/40 hover:text-slate-700 dark:hover:text-white/70 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>مكتملة</span>
             </button>
         </div>
         
@@ -3280,28 +3283,23 @@ window.checkCompletion = function checkCompletion() {
         html += `</div>`; // End Panels Container
         insightsContainer.innerHTML = html;
 
-        // Ensure global tab switcher exists
-        if (!window.switchInsightTab) {
-            window.switchInsightTab = (tab) => {
-                document.querySelectorAll('.insight-panel').forEach(p => p.classList.add('hidden'));
-                const targetPanel = document.getElementById('panel-' + tab);
-                if (targetPanel) targetPanel.classList.remove('hidden');
-                
-                const isDark = document.documentElement.classList.contains('dark');
-                document.querySelectorAll('.insight-tab').forEach(b => {
-                    b.classList.remove('bg-white', 'text-indigo-700', 'text-slate-800', 'dark:text-white', 'shadow-sm', 'border', 'border-slate-200/50', 'dark:border-transparent');
-                    b.classList.add('text-slate-400', 'dark:text-white/40');
-                });
-                const activeBtn = document.getElementById('tab-' + tab);
-                if (activeBtn) {
-                    activeBtn.classList.remove('text-slate-400', 'dark:text-white/40');
-                    activeBtn.classList.add('bg-white', 'shadow-sm', 'border', 'border-slate-200/50', 'dark:border-transparent',
-                        tab === 'completed' ? 'text-emerald-700' : tab === 'notstarted' ? 'text-slate-700' : 'text-indigo-700',
-                        'dark:text-white'
-                    );
-                }
-            };
-        }
+        // Global unified tab switcher
+        window.switchInsightTab = (tab) => {
+            document.querySelectorAll('.insight-panel').forEach(p => p.classList.add('hidden'));
+            const targetPanel = document.getElementById('panel-' + tab);
+            if (targetPanel) targetPanel.classList.remove('hidden');
+            
+            const inactiveClass = "insight-tab flex-1 py-2 text-xs font-bold rounded-xl text-slate-500 dark:text-white/40 hover:text-slate-700 dark:hover:text-white/70 transition-all flex items-center justify-center gap-1.5 cursor-pointer";
+            const activeClass = "insight-tab flex-1 py-2 text-xs font-bold rounded-xl bg-white dark:bg-white/10 text-indigo-600 dark:text-white shadow-sm border border-slate-200/50 dark:border-white/10 transition-all flex items-center justify-center gap-1.5 cursor-pointer";
+            
+            document.querySelectorAll('.insight-tab').forEach(b => {
+                b.className = inactiveClass;
+            });
+            const activeBtn = document.getElementById('tab-' + tab);
+            if (activeBtn) {
+                activeBtn.className = activeClass;
+            }
+        };
 
 
                 window.playSnappyEntrance('#dash-kpi-grid > div', 15);
@@ -3624,6 +3622,11 @@ window.checkCompletion = function checkCompletion() {
 // NAVIGATION SCREEN TOGGLER
 // ==========================================
 window.switchScreen = function(screenId, clickedBtn) {
+    if (window.pendingAppReload && screenId !== 'assessment-screen') {
+        window.location.reload();
+        return;
+    }
+
     // Hide all screen sections
     const allScreens = document.querySelectorAll('.screen-section');
     allScreens.forEach(screen => {

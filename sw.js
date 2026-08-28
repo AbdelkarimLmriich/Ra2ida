@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ra2ida-cache-v10';
+const CACHE_NAME = 'ra2ida-cache-v12';
 
 const ASSETS_TO_CACHE = [
   './',
