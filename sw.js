@@ -1,12 +1,14 @@
-const CACHE_NAME = 'ra2ida-cache-v12';
+const CACHE_NAME = 'ra2ida-cache-v17';
 
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './landing.html',
   './app.js',
   './AssessmentFlow.js',
   './ministry_logo.png',
   './logo.png',
+  './logo.svg',
   './manifest.json',
   'https://cdn.jsdelivr.net/npm/dexie@3.2.4/dist/dexie.min.js',
   'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
